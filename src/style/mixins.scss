@@ -1,0 +1,5 @@
+@mixin ellipsis {
+  white-space: nowrap; //不换行
+  text-overflow: ellipsis; //对象文本溢出时显示省略号
+  overflow: hidden; //溢出隐藏
+}
