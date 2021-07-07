@@ -1,19 +1,27 @@
 <template>
+<div class="mask" v-if="showChart" />
   <div class="cart" >
-    <div class="product"  v-if="TOF">
+    <div class="product"  v-if="showChart">
         <div class="product__header">
-
+        <div class="product__header__all"
+         @click="() => setCartItemsChecked(shopId)"
+      >
+          <div class="product__header__icon iconfont"
+          v-html="allChecked?'&#xe7f8;': '&#xe6f7;'"></div>
+         <div class="product__header__allText"> 全选</div>
+        </div>
+        <div class="product__header__clear"
+          @click="() => cleanCartProducts(shopId)">清除购物车</div>
       </div>
       <template
         v-for="item in productList"
-        :key="item._id"      >
+        :key="item._id">
         <div class="product__item" v-if="item.count > 0 "  >
           <div
             class="product__item__checked iconfont"
             v-html="item.check ? '&#xe7f8;': '&#xe6f7;'"
             @click="() => changeCartItemChecked(shopId, item._id)"
           />
-
           <img class="product__item__img" :src="item.imgUrl" />
           <div class="product__item__detail">
             <h4 class="product__item__title">{{item.name}}</h4>
@@ -36,7 +44,7 @@
         </div>
       </template>
     </div>
-    <div class="check" @click="handleClick">
+    <div class="check" @click="handleCartShowChange">
       <div class="check__icon">
         <img
           src="http://www.dell-lee.com/imgs/vue3/basket.png"
@@ -88,6 +96,19 @@ const useCartEffect = (shopId) => {
     }
     return count.toFixed(2)
   })
+  const allChecked = computed(() => {
+    const productList = cartList[shopId]
+    let result = true
+    if (productList) {
+      for (const i in productList) {
+        const product = productList[i]
+        if (product.count > 0 && !product.check) { // 只要有一个商品的状态不是check=true那么全部的check状态就为false
+          result = false
+        }
+      }
+    }
+    return result
+  })
 
   const productList = computed(() => {
     const productList = cartList[shopId] || []
@@ -97,18 +118,33 @@ const useCartEffect = (shopId) => {
   const changeCartItemChecked = (shopId, productId) => {
     store.commit('changeCartItemChecked', { shopId, productId })
   }
+  const cleanCartProducts = (shopId) => {
+    store.commit('cleanCartProducts', { shopId })
+  }
 
-  return { total, price, productList, changeCartItemInfo, changeCartItemChecked }
+  const setCartItemsChecked = (shopId) => {
+    store.commit('setCartItemsChecked', { shopId })
+  }
+  return {
+    total,
+    price,
+    productList,
+    changeCartItemInfo,
+    changeCartItemChecked,
+    allChecked,
+    cleanCartProducts,
+    setCartItemsChecked
+  }
 }
 // 控制购物车上方列表是否展示
 const hanldeClickCartEffect = () => {
-  const TOF = ref(true)
+  const showChart = ref(false)
 
-  const handleClick = () => {
-    TOF.value = !TOF.value
-    console.log(TOF.value)
+  const handleCartShowChange = () => {
+    showChart.value = !showChart.value
+    console.log(showChart.value)
   }
-  return { TOF, handleClick }
+  return { showChart, handleCartShowChange }
 }
 
 export default {
@@ -116,9 +152,30 @@ export default {
   setup () {
     const route = useRoute()
     const shopId = route.params.id
-    const { total, price, productList, changeCartItemInfo, changeCartItemChecked } = useCartEffect(shopId)
-    const { TOF, handleClick } = hanldeClickCartEffect()
-    return { total, price, shopId, productList, changeCartItemInfo, TOF, handleClick, changeCartItemChecked }
+    const {
+      total,
+      price,
+      productList,
+      changeCartItemInfo,
+      changeCartItemChecked,
+      allChecked,
+      cleanCartProducts,
+      setCartItemsChecked
+    } = useCartEffect(shopId)
+    const { showChart, handleCartShowChange } = hanldeClickCartEffect()
+    return {
+      total,
+      price,
+      shopId,
+      productList,
+      changeCartItemInfo,
+      showChart,
+      handleCartShowChange,
+      changeCartItemChecked,
+      allChecked,
+      cleanCartProducts,
+      setCartItemsChecked
+    }
   }
 }
 </script>
@@ -126,19 +183,59 @@ export default {
 <style lang="scss" scoped>
 @import '../../style/viriables.scss';
 @import '../../style/mixins.scss';
+.mask{
+  position: fixed;
+  top:0;
+  bottom: 0;
+  left:0;
+  right:0;
+  background: rgba(0, 0, 0, .5);
+  z-index:1;
+}
 .cart {
+  z-index:2;
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  background: #FFF;
 }
 .product {
   overflow-y: scroll;
   flex: 1;
   background: #FFF;
   &__header{
+    display: flex;
     height:.52rem;
     border-bottom: 1px solid #F1F1F1;
+    font-size:.14rem;
+    color:#333;
+    line-height:.52rem;
+    &__all{
+      margin-left:.16rem;
+      width:.64rem;
+      flex:1;
+      line-height: .52rem;
+      display: flex;
+    }
+    &__allText{
+       line-height: .52rem;
+      margin-left:.084rem;
+       text-align: center;
+       bottom: .18rem;
+
+    }
+    &__icon{
+      display: inline-block;
+      color:#0091FF;
+      font-size:.2rem;
+      line-height:.52rem;
+    }
+    &__clear{
+      flex:1;
+      margin-right:.16rem;
+      text-align: right;
+    }
   }
   &__item {
     position: relative;
