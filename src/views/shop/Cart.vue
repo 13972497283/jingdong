@@ -1,5 +1,8 @@
 <template>
-<div class="mask" v-if="showChart" />
+<div class="mask"
+ v-if="showChart"
+ @click="handleCartShowChange"
+  />
   <div class="cart" >
     <div class="product"  v-if="showChart">
         <div class="product__header">
@@ -44,8 +47,8 @@
         </div>
       </template>
     </div>
-    <div class="check" @click="handleCartShowChange">
-      <div class="check__icon">
+    <div class="check">
+      <div class="check__icon" @click="handleCartShowChange">
         <img
           src="http://www.dell-lee.com/imgs/vue3/basket.png"
           class="check__icon__img"
@@ -55,7 +58,11 @@
       <div class="check__info">
         总计：<span class="check__info__price">&yen; {{price}}</span>
       </div>
-      <div class="check__btn">去结算</div>
+      <div class="check__btn">
+        <router-link :to="{name:'Home'}">
+        去结算
+        </router-link>
+        </div>
     </div>
   </div>
 </template>
@@ -72,7 +79,7 @@ const useCartEffect = (shopId) => {
   const cartList = store.state.cartList
 
   const total = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let count = 0
     if (productList) {
       for (const i in productList) {
@@ -84,7 +91,7 @@ const useCartEffect = (shopId) => {
   })
 
   const price = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let count = 0
     if (productList) {
       for (const i in productList) {
@@ -97,7 +104,7 @@ const useCartEffect = (shopId) => {
     return count.toFixed(2)
   })
   const allChecked = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let result = true
     if (productList) {
       for (const i in productList) {
@@ -111,7 +118,7 @@ const useCartEffect = (shopId) => {
   })
 
   const productList = computed(() => {
-    const productList = cartList[shopId] || []
+    const productList = cartList[shopId]?.productList || {}// 如果购物车中没有该商铺的商品，那么就令该商品列表为空对象
     return productList
   })
 
@@ -136,7 +143,8 @@ const useCartEffect = (shopId) => {
     setCartItemsChecked
   }
 }
-// 控制购物车上方列表是否展示
+
+// 展示隐藏购物车逻辑
 const hanldeClickCartEffect = () => {
   const showChart = ref(false)
 
@@ -354,6 +362,10 @@ export default {
     text-align: center;
     color: #FFF;
     font-size: .14rem;
+     a {
+      color: $bgcolor;
+      text-decoration: none;
+    }
   }
 }
 </style>
