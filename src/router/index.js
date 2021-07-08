@@ -11,6 +11,10 @@ const routes = [
     // component: Home// 这里的组件要与import进来的组件同名
     component: () => import(/* webpackChunkName: "home" */'../views/home/Home')
     // 利用异步组件减小内存开销，访问哪个页面就加载哪个页面，防止访问登录页面时而加载首页及其他页面，造成内存开销
+  }, {
+    path: '/cartList',
+    name: 'CartList',
+    component: () => import(/* webpackChunkName: "cartList" */ '../views/cartList/CartList')
   },
   {
     path: '/shop/:id', // 进入shop页面时路由要跟店铺对应的id
