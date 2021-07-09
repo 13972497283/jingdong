@@ -59,7 +59,7 @@
         总计：<span class="check__info__price">&yen; {{calculations.price}}</span>
       </div>
       <div class="check__btn">
-        <router-link :to="{name:'Home'}">
+        <router-link :to="{path:`/orderConfirmation/${shopId}`}">
         去结算
         </router-link>
         </div>
@@ -71,12 +71,11 @@
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import { useCommonCartEffect } from './commonCartEffect'
+import { useCommonCartEffect } from '../../effects/cartEffects'
 // 获取购物车信息逻辑
 const useCartEffect = (shopId) => {
-  const { changeCartItemInfo } = useCommonCartEffect()
+  const { cartList, changeCartItemInfo, productList } = useCommonCartEffect(shopId)
   const store = useStore()
-  const cartList = store.state.cartList
 
   const calculations = computed(() => {
     const productList = cartList[shopId]?.productList
@@ -100,11 +99,6 @@ const useCartEffect = (shopId) => {
     }
     result.price = result.price.toFixed(2)
     return result
-  })
-
-  const productList = computed(() => {
-    const productList = cartList[shopId]?.productList || {}// 如果购物车中没有该商铺的商品，那么就令该商品列表为空对象
-    return productList
   })
 
   const changeCartItemChecked = (shopId, productId) => {

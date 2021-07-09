@@ -1,7 +1,7 @@
 <template>
 <div class="position">
   <span class="iconfont position__icon">&#xe64f;</span>
-  三峡大学欣苑1栋  三峡大学欣苑1栋  三峡大学欣苑1栋  三峡大学欣苑1栋
+  三峡大学欣苑1栋
   <span class="iconfont position__notice">&#xe6bb;</span>
 </div>
 <div class='search'>

@@ -17,6 +17,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "cartList" */ '../views/cartList/CartList')
   },
   {
+    path: '/orderConfirmation/:id', // 路径需要跟一个商店id参数
+    name: 'OrderConfirmation',
+    component: () => import(/* webpackChunkName: "orderConfirmation" */ '../views/orderConfirmation/OrderConfirmation')
+  },
+  {
     path: '/shop/:id', // 进入shop页面时路由要跟店铺对应的id
     name: 'Shop',
     component: () => import(/* webpackChunkName: "shop" */'../views/shop/Shop')
