@@ -2,7 +2,9 @@
 <div class="wrapper">
  <div class="top">
      <div class="top__header">
-       <div class="iconfont top__header__back">&#xe600;</div>
+       <div
+       class="iconfont top__header__back"
+       @click="handleBackClick">&#xe600;</div>
        确认订单
      </div>
      <div class="top__receiver">
@@ -18,6 +20,7 @@
 
  <div class="products">
   <div class="products__title">{{shopName}}</div>
+ <div class="products__wrapper">
   <div class="products__list">
   <template v-for="item in productList"
  :key="item._id" >
@@ -45,19 +48,29 @@
  </div>
     </template>
   </div>
+  </div>
+</div>
+
+<div class="order">
+  <div  class="order__price">实付金额 <b>￥{{calculations.price}}</b></div>
+  <div  class="order__btn">提交订单</div>
 </div>
  </div>
 </template>
 <script>
 import { useCommonCartEffect } from '../../effects/cartEffects'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 export default {
   name: 'OrderConfirmation',
   setup () {
+    const router = useRouter()
     const route = useRoute()
     const shopId = route.params.id
-    const { productList, shopName } = useCommonCartEffect(shopId)
-    return { productList, shopName }
+    const handleBackClick = () => {
+      router.back()
+    }
+    const { productList, shopName, calculations } = useCommonCartEffect(shopId)
+    return { productList, shopName, calculations, handleBackClick }
   }
 
 }
@@ -72,6 +85,7 @@ export default {
   right: 0;
   top: 0;
   bottom: 0;
+  overflow-y:scroll;//超出滚动
 }
 .top{
   position:relative;
@@ -133,18 +147,29 @@ export default {
   }
 }
 .products{
-  margin:.16rem .18rem .55rem .18rem;
+  margin:.16rem .18rem .1rem .18rem;
   background: #FFF;
   &__title{
   font-size: .16rem;
-  padding: .16rem .16rem 0 .16rem;
+  padding: .16rem .16rem .16rem .16rem;
   color:#333;
   }
-
+&__wrapper{
+  overflow-y:scroll;
+  margin:0 .18rem;
+  left:0;
+  right:0;
+  bottom:.6rem;
+  top:2.6rem;
+  position:absolute;
+}
+&__list{
+  background: #FFF;
+}
   &__item{
     position: relative;
     display: flex;
-    padding:.16rem;
+    padding:0 .16rem .16rem .16rem;
 &__img{
   width: .46rem;
   height: .46rem;
@@ -181,4 +206,27 @@ color:#000;
   }
   }
 
+.order{
+display: flex;
+height: .49rem;
+line-height: .49rem;
+background: #FFF;
+position: absolute;
+left:0;
+right:0;
+bottom: 0;
+  &__price{
+flex:1;
+text-indent: .24rem;
+font-size: .14rem;
+color:#333;
+  }
+  &__btn{
+    width: .98rem;
+    background: #4FB0F9;
+    color:#FFF;
+    text-align: center;
+    font-size: .14rem;
+  }
+}
 </style>

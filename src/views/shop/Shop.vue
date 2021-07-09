@@ -42,7 +42,7 @@ const useShopInfoEffect = () => {
 }
 // 点击为退逻辑
 const useBackRouterEffect = () => {
-  const router = useRouter()// 当前路由的信息
+  const router = useRouter()// 全局路由的信息
   const handleBackClick = () => {
     router.back()
   }
