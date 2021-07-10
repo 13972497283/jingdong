@@ -11,7 +11,14 @@ export const useCommonCartEffect = (shopId) => {
   }
   const productList = computed(() => {
     const productList = cartList[shopId]?.productList || {}// 如果购物车中没有该商铺的商品，那么就令该商品列表为空对象
-    return productList
+    const notEmptyProductList = {}
+    for (const i in productList) {
+      const product = productList[i]
+      if (product.count > 0) {
+        notEmptyProductList[i] = product
+      }
+    }
+    return notEmptyProductList
   })
 
   const shopName = computed(() => {

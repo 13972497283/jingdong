@@ -16,10 +16,10 @@
         <div class="product__header__clear"
           @click="() => cleanCartProducts(shopId)">清除购物车</div>
       </div>
-      <template
-        v-for="item in productList"
+
+        <div class="product__item"
+         v-for="item in productList"
         :key="item._id">
-        <div class="product__item" v-if="item.count > 0 "  >
           <div
             class="product__item__checked iconfont"
             v-html="item.check ? '&#xe7f8;': '&#xe6f7;'"
@@ -45,7 +45,7 @@
             >+</span>
           </div>
         </div>
-      </template>
+
     </div>
     <div class="check">
       <div class="check__icon" @click="handleCartShowChange">
@@ -65,6 +65,7 @@
         </div>
     </div>
   </div>
+  <div class="mask__checkbtn" v-if="calculations.total<=0"></div>
 </template>
 
 <script>
@@ -317,5 +318,14 @@ export default {
       text-decoration: none;
     }
   }
+}
+.mask__checkbtn{
+  width:.98rem;
+  height: .49rem;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index:3;
+ background: rgba(0, 0, 0, .5);
 }
 </style>

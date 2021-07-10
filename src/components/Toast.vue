@@ -27,6 +27,7 @@ export default {
 <style lang="scss" scoped>
 @import '../style/viriables.scss';
 .toast{
+  z-index:2;
   position:fixed;
   left:50%;
   top:50%;
