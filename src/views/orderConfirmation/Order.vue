@@ -35,48 +35,66 @@ import Toast, { useToastEffect } from '../../components/Toast.vue'
 import { useStore } from 'vuex'
 import { ref } from 'vue'
 
+// 下单相关
+const useMakeOrderEffect = (productList, showToast, shopName, shopId) => {
+  const router = useRouter()
+  const store = useStore()
+  const handleConfirmOrder = async (isCanceled) => {
+    console.log(productList)
+    const products = []
+    for (const i in productList.value) {
+      const product = productList.value[i]
+      products.push({ id: parseInt(product._id, 10), num: product.count })
+    }
+    console.log(products)
+    try {
+      const result = await post('/api/order', {
+        addressId: 1,
+        shopId,
+        shopName: shopName.value, // shopName本身是个ref类型的数据
+        isCanceled,
+        products
+      })
+      console.log(result)
+      if (result?.errno === 0) {
+        store.commit('cleanCartProducts', { shopId })// 下单成功后清空购物车
+        router.push({ name: 'OrderList' })
+      }
+    } catch (e) {
+      // 提示下单失败
+      showToast('下单失败')
+      console.log('失败')
+    }
+  }
+  return {
+    handleConfirmOrder
+  }
+}
+
+// 蒙层展示相关
+const useShowMaskEffect = () => {
+  const showConfirm = ref(false)
+  const handleSubmitClick = (status) => {
+    showConfirm.value = status
+  }
+  return {
+    handleSubmitClick, showConfirm
+  }
+}
+
 export default {
   name: 'Order',
   components: { Toast },
   setup () {
     const route = useRoute()
-    const router = useRouter()
-    const store = useStore()
+
     const shopId = parseInt(route.params.id, 10)// 转成十进制数
-    const showConfirm = ref(false)
 
     const { calculations, productList, shopName } = useCommonCartEffect(shopId)
-    const handleSubmitClick = (status) => {
-      showConfirm.value = status
-    }
+
     const { show, toastMessage, showToast } = useToastEffect()
-    const handleConfirmOrder = async (isCanceled) => {
-      console.log(productList)
-      const products = []
-      for (const i in productList.value) {
-        const product = productList.value[i]
-        products.push({ id: parseInt(product._id, 10), num: product.count })
-      }
-      console.log(products)
-      try {
-        const result = await post('/api/order', {
-          addressId: 1,
-          shopId,
-          shopName: shopName.value, // shopName本身是个ref类型的数据
-          isCanceled,
-          products
-        })
-        console.log(result)
-        if (result?.errno === 0) {
-          store.commit('cleanCartProducts', { shopId })// 下单成功后清空购物车
-          router.push({ name: 'Home' })
-        }
-      } catch (e) {
-        // 提示下单失败
-        showToast('下单失败')
-        console.log('失败')
-      }
-    }
+    const { handleSubmitClick, showConfirm } = useShowMaskEffect()
+    const { handleConfirmOrder } = useMakeOrderEffect(productList, showToast, shopName, shopId)
     return { calculations, handleConfirmOrder, show, toastMessage, showConfirm, handleSubmitClick }
   }
 }
