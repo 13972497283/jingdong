@@ -24,6 +24,7 @@
 export default {
   name: 'ShopInfo',
   props: ['item', 'hideBordered']
+
 }
 </script>
 <style lang="scss" scoped>
