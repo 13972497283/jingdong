@@ -29,6 +29,11 @@
   </div>
 </div>
   <Docker :currentIndex="1"/>
+  <mask class="emptyCart" v-if="showEmptyCart">
+    <img
+    class="emptyCart__img"
+    src="../../assets/购物车是空的.jpg">
+  </mask>
 </template>
 
 <script>
@@ -60,7 +65,6 @@ const cloneCartListToShopList = () => {
   var shopList = deepClone(cartList)// 克隆vuex中的cartList
   for (const shop in shopList) {
     const TOF = ref(false)
-    console.log(shopList[shop].showShop)
     for (const product in shopList[shop].productList) {
       if (shopList[shop].productList[product].count > 0) {
         TOF.value = true
@@ -71,12 +75,24 @@ const cloneCartListToShopList = () => {
   return { shopList }
 }
 
+// 控制是否展示购物车为空模块
+const showEmptyCartMask = (shopList) => {
+  const showEmpty = ref(true)
+  for (const shop in shopList) {
+    if (shopList[shop].showShop === true) {
+      showEmpty.value = false
+    }
+  }
+  const showEmptyCart = showEmpty.value
+  return { showEmptyCart }
+}
 export default {
   components: { Docker },
   name: 'CartList',
   setup () {
     const { shopList } = cloneCartListToShopList()
-    return { shopList }
+    const { showEmptyCart } = showEmptyCartMask(shopList)
+    return { shopList, showEmptyCart }
   }
 
 }
@@ -158,6 +174,25 @@ display: flex;
       text-align: right;
       }
     }
+  }
+}
+.emptyCart{
+  // height:5.54rem;
+  left:.16rem;
+  right:.16rem;
+  position:absolute;
+  top:.80rem;
+  bottom:.65rem;
+  background: #FFF;
+  // margin:.16rem .16rem 0 .16rem;
+  z-index:0;
+  &__img{
+    width:2rem;
+    height:2rem;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    position: absolute;
   }
 }
 </style>
